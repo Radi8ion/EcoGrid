@@ -393,3 +393,24 @@ void reconnectMQTT() {
     client.publish("home/energy/meter1/status", buffer);
     Serial.println("Status published to MQTT");
   }
+
+float readEnergyFromEEPROM() {
+  float value = 0.0;
+  EEPROM.get(0, value);
+  
+  // Check if the value is valid (not NaN and within reasonable range)
+  if (isnan(value) || value < 0 || value > 1000000) {
+    value = 0.0; // Reset to 0 if invalid
+  }
+  
+  Serial.print("Read energy from EEPROM: ");
+  Serial.println(value);
+  return value;
+}
+
+void saveEnergyToEEPROM(float energy) {
+  EEPROM.put(0, energy);
+  EEPROM.commit();
+  Serial.print("Saved energy to EEPROM: ");
+  Serial.println(energy);
+}
